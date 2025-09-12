@@ -18,18 +18,50 @@ Compile::Compile(std::map<std::string, Variable>& variables) : variables(variabl
     };
     this->actions["add"] = [this](const std::vector<std::string>& args) {
         Variable* arg1 = this->getPointer(args[0]);
-        Variable* arg2 = this->getPointer(args[1]);
-        if (arg1->type != 'i' || arg2->type != 'i') {
+        Variable arg2 = this->getCopy(args[1]);
+        if (arg1->type != 'i' || (arg2.type != 'i' && arg2.type != 'n')) {
             std::cout << "Error: Cannot perform addition on non-integer variables." << std::endl;
             return;
         }
-        arg1->value = std::to_string(std::stoi(arg1->value) + std::stoi(arg2->value));
+        arg1->value = std::to_string(std::stoi(arg1->value) + std::stoi(arg2.value));
     };
     this->functions["makeVar"] = [this](const std::vector<std::string>& args) {
         std::string type = registers[0].value;
         std::string name = registers[1].value;
         std::string value = registers[2].value;
         this->variables.emplace(name, Variable(value, type[0]));
+    };
+    this->conditions["eq"] = [this](const std::vector<std::string>& args) {
+        Variable* arg1 = this->getPointer(args[0]);
+        Variable arg2 = this->getCopy(args[1]);
+        if (arg1->value.compare(arg2.value) == 0) {
+            return true;
+        }
+        return false;
+    };
+    this->conditions["lo"] = [this](const std::vector<std::string>& args) {
+        Variable* arg1 = this->getPointer(args[0]);
+        Variable arg2 = this->getCopy(args[1]);
+        if (arg1->type != 'i' || (arg2.type != 'i' && arg2.type != 'n')) {
+            std::cout << "Error: Cannot perform comparison on non-integer variables." << std::endl;
+            return false;
+        }
+        if (std::stoi(arg1->value) < std::stoi(arg2.value)) {
+            return true;
+        }
+        return false;
+    };
+    this->conditions["gr"] = [this](const std::vector<std::string>& args) {
+        Variable* arg1 = this->getPointer(args[0]);
+        Variable arg2 = this->getCopy(args[1]);
+        if (arg1->type != 'i' || (arg2.type != 'i' && arg2.type != 'n')) {
+            std::cout << "Error: Cannot perform comparison on non-integer variables." << std::endl;
+            return false;
+        }
+        if (std::stoi(arg1->value) > std::stoi(arg2.value)) {
+            return true;
+        }
+        return false;
     };
 }
 
@@ -58,6 +90,14 @@ void Compile::Run(std::string line) {
     this->actions[actionName](args);
 }
 
+bool Compile::Check(std::string line) {
+    if (line == "") {return true;}
+    std::string conditionName = this->getConditionName(line);
+    if (conditionName == "") {return false;}
+    std::vector<std::string> args = this->getArgs(line);
+    return this->conditions[conditionName](args);
+}
+
 std::string Compile::getActionName(std::string line) {
     size_t pos = line.find(' ');
     std::string actionName = line.substr(0, pos);
@@ -71,11 +111,21 @@ std::string Compile::getActionName(std::string line) {
 std::string Compile::getFunctionName(std::string line) {
     size_t pos = line.find(' ');
     std::string functionName = line.substr(0, pos);
-    if (this->functions.find(functionName) == functions.end()) {
+    if (this->functions.find(functionName) == this->functions.end()) {
         std::cout << "Function not found: (" << functionName  << ")" << std::endl;
         return "";
     }
     return functionName;
+}
+
+std::string Compile::getConditionName(std::string line) {
+    size_t pos = line.find(' ');
+    std::string conditionName = line.substr(0, pos);
+    if (this->conditions.find(conditionName) == this->conditions.end()) {
+        std::cout << "Condition not found: (" << conditionName  << ")" << std::endl;
+        return "";
+    }
+    return conditionName;
 }
 
 std::vector<std::string> Compile::getArgs(std::string line) {

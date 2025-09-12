@@ -5,7 +5,7 @@ Script::Script(std::vector<Node> nodes, std::vector<Line> lines, std::map<std::s
     this->lines = lines;
     this->variables = variables;
     this->index = 0;
-    this->speed = 100;
+    this->speed = 2000;
     this->time = 0;
 }
 
@@ -27,17 +27,18 @@ bool Script::Run(Compile compile) {
     time = 0;
 
     this->nodes[this->index].isOn = false;
-    bool found = false;
+    bool isTrueLine = false;
     for (int i = 0; i < this->lines.size(); i++) {
         if (this->lines[i].start == this->index) {
-            this->index = this->lines[i].end;
-            found = true;
-            break;
+            if (compile.Check(this->lines[i].command)) {
+                this->index = this->lines[i].end;
+                isTrueLine = true;
+                break;
+            }
         }
     }
 
-    if (found) {
-        //std::cout << this->nodes[this->index].command << std::endl;
+    if (isTrueLine) {
         compile.Run(this->nodes[this->index].command);
         this->nodes[this->index].isOn = true;
         return true;

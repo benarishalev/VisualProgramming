@@ -1,8 +1,15 @@
 #include "line.hpp"
 
+Line::Line(int start, int end, std::string command) {
+    this->start = start;
+    this->end = end;
+    this->command = command;
+}
+
 Line::Line(int start, int end) {
     this->start = start;
     this->end = end;
+    this->command = "";
 }
 
 void Line::Draw(SDL_Renderer* renderer, std::vector<Node> nodes) {
