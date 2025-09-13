@@ -15,6 +15,7 @@ class Line {
     Line(int start, int end, std::string command);
     Line(int start, int end); // "defualt" constructor
     void Draw(SDL_Renderer* renderer, std::vector<Node> nodes);
+    bool operator==(const Line& other);
 };
 
 #endif

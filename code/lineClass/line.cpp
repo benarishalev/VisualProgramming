@@ -16,3 +16,7 @@ void Line::Draw(SDL_Renderer* renderer, std::vector<Node> nodes) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderLine(renderer, nodes[this->start].position.x, nodes[this->start].position.y, nodes[this->end].position.x, nodes[this->end].position.y);
 }
+
+bool Line::operator==(const Line& other) {
+    return this->start == other.start && this->end == other.end;
+}

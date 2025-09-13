@@ -1,22 +1,31 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
+#include <cmath>
 
 #include "scriptClass/script.hpp"
 #include "compileClass/compile.hpp"
 #include "variableClass/variable.hpp"
+#include "placementClass/placement.hpp"
 #include "globals.hpp"
 
 std::vector<Variable> registers = std::vector<Variable>(10);
 int WIDTH = 1000;
 int HEIGHT = 1000;
 
+double getDistance(double x1, double y1, double x2, double y2) {
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
 
 int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
     SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "direct3d");
-    SDL_Window* window = SDL_CreateWindow("Programming", WIDTH, HEIGHT, 0);
+    SDL_Window* window = SDL_CreateWindow("Programming", WIDTH, HEIGHT, SDL_WINDOW_RESIZABLE);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, 0);
+
+    TTF_Font* font = TTF_OpenFont("fonts/pixel.ttf", 20);
 
     // load images
     SDL_Texture* circleImg = IMG_LoadTexture(renderer, "imgs/circle.png");
@@ -42,11 +51,10 @@ int main(int argc, char *argv[]) {
     std::map<std::string, Variable> variables;
     Script script(nodes, lines, variables);
     Compile compile(script.variables);
+    Placement placement(renderer, font, WIDTH, HEIGHT);
 
     SDL_Event event;
     bool running = true;
-
-    Node dragNode({100, HEIGHT-100});
 
     bool scriptRunning = true;
 
@@ -54,6 +62,26 @@ int main(int argc, char *argv[]) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT) {
                 running = false;
+            }
+            if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    if (placement.ClickDialog(script, event.button.x, event.button.y)) {
+                        continue;
+                    }
+                    if (placement.Click(event.button.x, event.button.y)) {
+                        continue;
+                    }
+                    placement.PlaceNode(script, event.button.x, event.button.y);
+                    placement.PlaceLine(script, event.button.x, event.button.y);
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT) {
+                    placement.openDialog(script, event.button.x, event.button.y);
+                }
+            }
+            if (event.type == SDL_EVENT_WINDOW_RESIZED) {
+                WIDTH = event.window.data1;
+                HEIGHT = event.window.data2;
+                placement.updatePosition(WIDTH, HEIGHT);
             }
         }
 
@@ -63,6 +91,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderClear(renderer);
 
         script.Draw(renderer, circleImg);
+        placement.Draw(renderer);
 
         SDL_RenderPresent(renderer);
     }
