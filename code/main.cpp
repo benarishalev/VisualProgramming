@@ -34,21 +34,10 @@ int main(int argc, char *argv[]) {
     // };
 
     std::vector<Node> nodes = {
-        Node({50, 50}, ""),
-        Node({100, 100}, "mov r1, 0"),
-        Node({200, 250}, "call print, 1"),
-        Node({200, 150}, "add r1, 1"),
-        Node({300, 200}, "mov r0, 5"),
-        Node({100, 200}, "mov r0, 10"),
+        Node({100, 100}),
     };
     std::vector<Line> lines = {
-        Line(0, 1),
-        Line(1, 3),
-        Line(2, 3),
-        Line(3, 4, "lo r1, 6"),
-        Line(3, 5, "lo r1, 11"),
-        Line(4, 2),
-        Line(5, 2),
+        
     };
     std::map<std::string, Variable> variables;
     Script script(nodes, lines, variables);
@@ -56,6 +45,8 @@ int main(int argc, char *argv[]) {
 
     SDL_Event event;
     bool running = true;
+
+    Node dragNode({100, HEIGHT-100});
 
     bool scriptRunning = true;
 

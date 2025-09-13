@@ -13,6 +13,7 @@ class Node {
         bool isOn;
     
     Node(Point position, std::string command);
+    Node(Point position);
     void Draw(SDL_Renderer* renderer, SDL_Texture* circleImg);
 };
 

@@ -7,6 +7,13 @@ Node::Node(Point position, std::string command) {
     this->isOn = false;
 }
 
+Node::Node(Point position) {
+    this->position = position;
+    this->command = "";
+    this->size = 25;
+    this->isOn = false;
+}
+
 void Node::Draw(SDL_Renderer* renderer, SDL_Texture* circleImg) {
     SDL_FRect rect;
     rect.w = this->size;
