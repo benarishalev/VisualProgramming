@@ -5,14 +5,13 @@
 #include "../buttonClass/button.hpp"
 #include "../scriptClass/script.hpp"
 #include "../nodeClass/node.hpp"
-#include "../globals.hpp"
+#include "../GLOBALS/globals.hpp"
 #include "../dialogClass/dialog.hpp"
+#include "../textBoxClass/textBox.hpp"
 
 class Placement {
     public:
-        Button nodeButton;
-        Button lineButton;
-        Button moveButtom;
+        std::vector<Button> buttons;
         bool buttonsClick[3] = {false, false, false};
         int nodeLineIndex;
         int nodeDialogIndex;
@@ -20,6 +19,8 @@ class Placement {
         TTF_Font*& font;
         Dialog dialog;
         bool showDialog;
+        TextBox codeText;
+        bool showCodeText;
         
     Placement(SDL_Renderer* renderer, TTF_Font*& font, int WIDTH, int HEIGHT);
 
@@ -31,11 +32,12 @@ class Placement {
     void Draw(SDL_Renderer* renderer);
     void updatePosition(int WIDTH, int HEIGHT);
     void openDialog(Script& script, int x, int y);
-    bool ClickDialog(Script& script, int x, int y);
+    bool ClickDialog(Script& script, int x, int y, SDL_Renderer* renderer, TTF_Font* font);
     void removeNode(Script& script, int x, int y);
     void moveNode(Script& script, int x, int y);
     void moveNodeUpdate(Script& script);
     int getClickedNodeIndex(Script& script, int x, int y);
+    void getInput(Script& script, char x, SDL_Renderer* renderer, TTF_Font* font);
 };
 
 #endif

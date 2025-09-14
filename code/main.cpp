@@ -8,15 +8,7 @@
 #include "compileClass/compile.hpp"
 #include "variableClass/variable.hpp"
 #include "placementClass/placement.hpp"
-#include "globals.hpp"
-
-std::vector<Variable> registers = std::vector<Variable>(10);
-int WIDTH = 1000;
-int HEIGHT = 1000;
-
-double getDistance(double x1, double y1, double x2, double y2) {
-    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-}
+#include "GLOBALS/globals.hpp"
 
 int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -24,6 +16,13 @@ int main(int argc, char *argv[]) {
     SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "direct3d");
     SDL_Window* window = SDL_CreateWindow("Programming", WIDTH, HEIGHT, SDL_WINDOW_RESIZABLE);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, 0);
+
+    SDL_StartTextInput(window);
+
+    // set up the cursor
+    regularCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_DEFAULT);
+    handCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
+    SDL_SetCursor(regularCursor);
 
     TTF_Font* font = TTF_OpenFont("fonts/pixel.ttf", 20);
 
@@ -65,7 +64,7 @@ int main(int argc, char *argv[]) {
             }
             if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    if (placement.ClickDialog(script, event.button.x, event.button.y)) {
+                    if (placement.ClickDialog(script, event.button.x, event.button.y, renderer, font)) {
                         continue;
                     }
                     if (placement.Click(event.button.x, event.button.y)) {
@@ -83,6 +82,14 @@ int main(int argc, char *argv[]) {
                 WIDTH = event.window.data1;
                 HEIGHT = event.window.data2;
                 placement.updatePosition(WIDTH, HEIGHT);
+            }
+            if (event.type == SDL_EVENT_TEXT_INPUT) {
+                placement.getInput(script, event.text.text[0], renderer, font);
+            }
+            if (event.type == SDL_EVENT_KEY_DOWN) {
+                if (event.key.scancode == SDL_SCANCODE_BACKSPACE) {
+                    placement.getInput(script, '\0', renderer, font);
+                }
             }
         }
 

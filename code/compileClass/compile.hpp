@@ -8,7 +8,7 @@
 #include <iostream>
 #include <variant>
 
-#include "../globals.hpp"
+#include "../GLOBALS/globals.hpp"
 #include "../variableClass/variable.hpp"
 
 class Compile {
