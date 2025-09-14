@@ -5,16 +5,17 @@ Placement::Placement(SDL_Renderer* renderer, TTF_Font*& font, int WIDTH, int HEI
     this->nodeButton.setText(renderer, "Node", font);
     this->lineButton = Button({300, (float)HEIGHT-100}, {150, 75});
     this->lineButton.setText(renderer, "Line", font);
-    this->nodeClick = false;
-    this->lineClick = false;
+    this->moveButtom = Button({500, (float)HEIGHT-100}, {150, 75});
+    this->moveButtom.setText(renderer, "Move", font);
     this->nodeLineIndex = -1;
     this->showDialog = false;
     this->nodeDialogIndex = -1;
+    this->moveNodeIndex = -1;
     this->dialog.setButtons(renderer, {"remove"}, font);
 }
 
 void Placement::PlaceNode(Script& script, int x, int y) {
-    if (this->nodeClick) {
+    if (this->buttonsClick[0]) {
         if (canPlaceNode(script, x, y)) {
             script.nodes.push_back(Node(Point(x, y)));
         }
@@ -40,6 +41,15 @@ bool Placement::canPlaceNode(Script& script, int x, int y) {
     return true;
 }
 
+int Placement::getClickedNodeIndex(Script& script, int x, int y) {
+    for (int i = 0; i < script.nodes.size(); i++) {
+        if (getDistance(x, y, script.nodes[i].position.x, script.nodes[i].position.y) < script.nodes[i].size / 2 + 10) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 int Placement::getNearestNodeIndex(Script& script, int x, int y) {
     int minIndex = -1;
     double minDistance = 1000000000;
@@ -53,8 +63,29 @@ int Placement::getNearestNodeIndex(Script& script, int x, int y) {
     return minIndex;
 }
 
+void Placement::moveNode(Script& script, int x, int y) {
+    if (this->buttonsClick[2]) {
+        if (this->moveNodeIndex == -1) {
+            this->moveNodeIndex = getClickedNodeIndex(script, x, y);
+        } else {
+            this->moveNodeIndex = -1;
+        }
+    } else {
+        this->moveNodeIndex = -1;
+    }
+}
+
+void Placement::moveNodeUpdate(Script& script) {
+    if (this->moveNodeIndex != -1 && this->buttonsClick[2]) {
+        float x, y;
+        SDL_GetMouseState(&x, &y);
+        script.nodes[this->moveNodeIndex].position.x = x;
+        script.nodes[this->moveNodeIndex].position.y = y;
+    }
+}
+
 void Placement::PlaceLine(Script& script, int x, int y) {
-    if (this->lineClick) {
+    if (this->buttonsClick[1]) {
         if (this->nodeLineIndex != -1) {
             int index = getNearestNodeIndex(script, x, y);
             if (index != -1 && index != this->nodeLineIndex) {
@@ -79,21 +110,32 @@ void Placement::PlaceLine(Script& script, int x, int y) {
 }
 
 bool Placement::Click(int x, int y) {
+    this->showDialog = false;
     if (this->nodeButton.isClick(x, y)) {
-        this->nodeClick = !this->nodeClick;
-        this->lineClick = false;
+        for (int i = 0; i < 3; i++) {
+            this->buttonsClick[i] = false;
+        }
+        this->buttonsClick[0] = true;
         return true;
     } else if (this->lineButton.isClick(x, y)) {
-        this->lineClick = !this->lineClick;
-        this->nodeClick = false;
+        for (int i = 0; i < 3; i++) {
+            this->buttonsClick[i] = false;
+        }
+        this->buttonsClick[1] = true;
         return true;
+    } else if (this->moveButtom.isClick(x, y)) {
+        for (int i = 0; i < 3; i++) {
+            this->buttonsClick[i] = false;
+        }
+        this->buttonsClick[2] = true;
     }
     return false;
 }
 
 void Placement::Draw(SDL_Renderer* renderer) {
-    this->nodeButton.Draw(renderer, (this->nodeClick ? SDL_Color{100, 100, 100} : SDL_Color{0, 0, 0}));
-    this->lineButton.Draw(renderer, (this->lineClick ? SDL_Color{100, 100, 100} : SDL_Color{0, 0, 0}));
+    this->nodeButton.Draw(renderer, (this->buttonsClick[0] ? SDL_Color{100, 100, 100} : SDL_Color{0, 0, 0}));
+    this->lineButton.Draw(renderer, (this->buttonsClick[1] ? SDL_Color{100, 100, 100} : SDL_Color{0, 0, 0}));
+    this->moveButtom.Draw(renderer, (this->buttonsClick[2] ? SDL_Color{100, 100, 100} : SDL_Color{0, 0, 0}));
     if (this->showDialog) {
         this->dialog.Draw(renderer);
     }

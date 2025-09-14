@@ -73,6 +73,7 @@ int main(int argc, char *argv[]) {
                     }
                     placement.PlaceNode(script, event.button.x, event.button.y);
                     placement.PlaceLine(script, event.button.x, event.button.y);
+                    placement.moveNode(script, event.button.x, event.button.y);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
                     placement.openDialog(script, event.button.x, event.button.y);
@@ -92,6 +93,7 @@ int main(int argc, char *argv[]) {
 
         script.Draw(renderer, circleImg);
         placement.Draw(renderer);
+        placement.moveNodeUpdate(script);
 
         SDL_RenderPresent(renderer);
     }

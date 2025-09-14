@@ -12,13 +12,14 @@ class Placement {
     public:
         Button nodeButton;
         Button lineButton;
-        bool nodeClick;
-        bool lineClick;
+        Button moveButtom;
+        bool buttonsClick[3] = {false, false, false};
         int nodeLineIndex;
+        int nodeDialogIndex;
+        int moveNodeIndex;
         TTF_Font*& font;
         Dialog dialog;
         bool showDialog;
-        int nodeDialogIndex;
         
     Placement(SDL_Renderer* renderer, TTF_Font*& font, int WIDTH, int HEIGHT);
 
@@ -32,6 +33,9 @@ class Placement {
     void openDialog(Script& script, int x, int y);
     bool ClickDialog(Script& script, int x, int y);
     void removeNode(Script& script, int x, int y);
+    void moveNode(Script& script, int x, int y);
+    void moveNodeUpdate(Script& script);
+    int getClickedNodeIndex(Script& script, int x, int y);
 };
 
 #endif
