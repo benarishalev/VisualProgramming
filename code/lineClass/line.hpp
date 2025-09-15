@@ -5,6 +5,8 @@
 #include "../nodeClass/node.hpp"
 #include <SDL3/SDL.h>
 #include <vector>
+#include <cmath>
+#include "../GLOBALS/globals.hpp"
 
 class Line {
     public:

@@ -9,6 +9,8 @@
 #include <iostream>
 #include "../compileClass/compile.hpp"
 #include "../variableClass/variable.hpp"
+#include "../GLOBALS/globals.hpp"
+
 
 class Script {
     public:
@@ -21,7 +23,7 @@ class Script {
         int time;
     
     Script(std::vector<Node> nodes, std::vector<Line> lines, std::map<std::string, Variable> variables);
-    void Draw(SDL_Renderer* renderer, SDL_Texture* circleImg);
+    void Draw(SDL_Renderer* renderer);
 
     // void RunAll();
     bool Run(Compile compile);

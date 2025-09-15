@@ -27,7 +27,8 @@ int main(int argc, char *argv[]) {
     TTF_Font* font = TTF_OpenFont("fonts/pixel.ttf", 20);
 
     // load images
-    SDL_Texture* circleImg = IMG_LoadTexture(renderer, "imgs/circle.png");
+    circleImg = IMG_LoadTexture(renderer, "imgs/circle.png");
+    pointerTexture = IMG_LoadTexture(renderer, "imgs/pointer.png");
 
     // fib function
     // std::vector<Node> nodes = {
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]) {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        script.Draw(renderer, circleImg);
+        script.Draw(renderer);
         placement.Draw(renderer);
         placement.moveNodeUpdate(script);
 

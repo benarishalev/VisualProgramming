@@ -29,13 +29,28 @@ void Placement::PlaceNode(Script& script, int x, int y) {
 }
 
 void Placement::removeNode(Script& script, int x, int y) {
+    // if removing node then make sure
+    // that you are not connecting line
+    // to the removed node :)
+    this->nodeLineIndex = -1;
+    if (this->nodeDialogIndex == -1) {
+        std::cout << "No node selected" << std::endl;
+        return;
+    }
     for (int j = 0; j < script.lines.size(); j++) {
         if (script.lines[j].start == nodeDialogIndex || script.lines[j].end == nodeDialogIndex) {
             script.lines.erase(script.lines.begin() + j);
             j--;
         }
     }
-    script.nodes.erase(script.nodes.begin() + nodeDialogIndex);
+    for (int i = 0; i < script.lines.size(); i++) {
+        if (script.lines[i].start > nodeDialogIndex) script.lines[i].start--;
+        if (script.lines[i].end > nodeDialogIndex) script.lines[i].end--;
+    }
+    if (nodeDialogIndex < script.nodes.size()) {
+        script.nodes.erase(script.nodes.begin() + nodeDialogIndex);
+        nodeDialogIndex = -1;
+    }
 }
 
 bool Placement::canPlaceNode(Script& script, int x, int y) {
@@ -178,7 +193,9 @@ bool Placement::ClickDialog(Script& script, int x, int y, SDL_Renderer* renderer
         this->nodeDialogIndex = -1;
         return true;
     }
-    if (this->dialog.getPressed(x, y) == 1) {
+    // makes sure that when i tried to change the code
+    // it wont crash
+    if (this->dialog.getPressed(x, y) == 1 && !this->showCodeText && this->showDialog && this->nodeDialogIndex != -1) {
         this->showCodeText = !this->showCodeText;
         this->codeText.text = script.nodes[this->nodeDialogIndex].command;
         this->codeText.setTexture(renderer, font, {255, 255, 255});

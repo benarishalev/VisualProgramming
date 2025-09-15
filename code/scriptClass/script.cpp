@@ -9,7 +9,7 @@ Script::Script(std::vector<Node> nodes, std::vector<Line> lines, std::map<std::s
     this->time = 0;
 }
 
-void Script::Draw(SDL_Renderer* renderer, SDL_Texture* circleImg) {
+void Script::Draw(SDL_Renderer* renderer) {
     for (int i = 0; i < this->lines.size(); i++) {
         this->lines[i].Draw(renderer, this->nodes);
     }
