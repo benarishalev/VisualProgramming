@@ -22,3 +22,5 @@ extern SDL_Cursor* handCursor;
 
 extern SDL_Texture* circleImg;
 extern SDL_Texture* pointerTexture;
+
+extern bool runningCode;

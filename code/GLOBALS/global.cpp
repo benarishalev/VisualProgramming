@@ -20,3 +20,5 @@ SDL_Cursor* handCursor = nullptr;
 SDL_Texture* pointerTexture = nullptr;
 SDL_Texture* circleImg = nullptr;
 
+bool runningCode = NULL;
+

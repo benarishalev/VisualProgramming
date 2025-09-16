@@ -1,0 +1,1 @@
+make game -static -console run code/nodeClass/*.cpp code/pointClass/*.cpp code/lineClass/*.cpp code/scriptClass/*.cpp code/compileClass/*.cpp code/variableClass/*.cpp code/placementClass/*.cpp code/buttonClass/*.cpp code/dialogClass/*.cpp code/GLOBALS/*.cpp code/textBoxClass/*.cpp

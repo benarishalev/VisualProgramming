@@ -7,12 +7,14 @@
 #include <vector>
 #include <cmath>
 #include "../GLOBALS/globals.hpp"
+#include <algorithm>
 
 class Line {
     public:
         int start;
         int end;
         std::string command;
+        float lengthPercentage;
     
     Line(int start, int end, std::string command);
     Line(int start, int end); // "defualt" constructor

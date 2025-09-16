@@ -15,8 +15,8 @@ void TextBox::setTexture(SDL_Renderer* renderer, TTF_Font* font, SDL_Color color
 void TextBox::Draw(SDL_Renderer* renderer, int x, int y) {
     SDL_FRect rect;
     SDL_GetTextureSize(this->texture, &rect.w, &rect.h);
-    rect.w *= 2;
-    rect.h *= 2;
+    rect.w = std::max(rect.w*2, 20.0f);
+    rect.h = std::max(rect.h*2, 20.0f);
     rect.x = x;
     rect.y = y;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -27,6 +27,6 @@ void TextBox::Draw(SDL_Renderer* renderer, int x, int y) {
 }
 
 void TextBox::handleInput(char input) {
-    if (input == '\0' && this->text.size() > 0) {this->text.pop_back(); return;}
+    if (input == '\0') {if (this->text.size() > 0) {this->text.pop_back();} return;}
     this->text += input;
 }

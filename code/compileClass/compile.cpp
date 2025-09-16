@@ -9,21 +9,26 @@ Compile::Compile(std::map<std::string, Variable>& variables) : variables(variabl
         std::cout << std::endl;
     };
     this->actions["mov"] = [this](const std::vector<std::string>& args) {
+        if (args.size() != 2) {return "Error: Not Enough Args in Action";}
         Variable* arg1 = this->getPointer(args[0]);
         Variable arg2 = this->getCopy(args[1]);
         arg1->value = arg2.value;
+        return "";
     };
     this->actions["call"] = [this](const std::vector<std::string>& args) {
+        if (args.size() != 2) {return "Error: Not Enough Args in Action";}
         this->functions[args[0]](args);
+        return "";
     };
     this->actions["add"] = [this](const std::vector<std::string>& args) {
+        if (args.size() != 2) {return "Error: Not Enough Args in Action";}
         Variable* arg1 = this->getPointer(args[0]);
         Variable arg2 = this->getCopy(args[1]);
         if (arg1->type != 'i' || (arg2.type != 'i' && arg2.type != 'n')) {
-            std::cout << "Error: Cannot perform addition on non-integer variables." << std::endl;
-            return;
+            return "Error: Cannot perform addition on non-integer variables.";
         }
         arg1->value = std::to_string(std::stoi(arg1->value) + std::stoi(arg2.value));
+        return "";
     };
     this->functions["makeVar"] = [this](const std::vector<std::string>& args) {
         std::string type = registers[0].value;
@@ -83,11 +88,12 @@ Variable Compile::getCopy(std::string arg) {
     }
 }
 
-void Compile::Run(std::string line) {
+std::string Compile::Run(std::string line) {
     std::string actionName = this->getActionName(line);
-    if (actionName == "") {return;}
+    if (actionName == "") {return "Error: Invalid Action";}
     std::vector<std::string> args = this->getArgs(line);
-    this->actions[actionName](args);
+    std::string codeError = this->actions[actionName](args);
+    return codeError == "" ? "" : (codeError + "\n Line: " + line);
 }
 
 bool Compile::Check(std::string line) {
@@ -101,10 +107,7 @@ bool Compile::Check(std::string line) {
 std::string Compile::getActionName(std::string line) {
     size_t pos = line.find(' ');
     std::string actionName = line.substr(0, pos);
-    if (this->actions.find(actionName) == this->actions.end()) {
-        std::cout << "Action not found: (" << actionName  << ")" << std::endl;
-        return "";
-    }
+    if (this->actions.find(actionName) == this->actions.end()) {return "";}
     return actionName;
 }
 

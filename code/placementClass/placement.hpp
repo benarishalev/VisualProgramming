@@ -31,7 +31,7 @@ class Placement {
     bool Click(int x, int y);
     void Draw(SDL_Renderer* renderer);
     void updatePosition(int WIDTH, int HEIGHT);
-    void openDialog(Script& script, int x, int y);
+    void openDialog(Script& script, int x, int y, SDL_Renderer* renderer);
     bool ClickDialog(Script& script, int x, int y, SDL_Renderer* renderer, TTF_Font* font);
     void removeNode(Script& script, int x, int y);
     void moveNode(Script& script, int x, int y);

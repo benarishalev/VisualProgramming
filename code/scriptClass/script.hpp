@@ -26,7 +26,7 @@ class Script {
     void Draw(SDL_Renderer* renderer);
 
     // void RunAll();
-    bool Run(Compile compile);
+    std::string Run(Compile compile);
 };
 
 #endif

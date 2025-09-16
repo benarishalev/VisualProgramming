@@ -14,12 +14,12 @@
 class Compile {
     public:
         std::map<std::string, std::function<void(const std::vector<std::string>&)>> functions;
-        std::map<std::string, std::function<void(const std::vector<std::string>&)>> actions;
+        std::map<std::string, std::function<std::string(const std::vector<std::string>&)>> actions;
         std::map<std::string, std::function<bool(const std::vector<std::string>&)>> conditions;
         std::map<std::string, Variable>& variables;
     
     Compile(std::map<std::string, Variable>& variables);
-    void Run(std::string line);
+    std::string Run(std::string line);
     bool Check(std::string line);
     std::string getActionName(std::string line);
     std::string getFunctionName(std::string line);

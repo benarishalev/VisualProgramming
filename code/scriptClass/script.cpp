@@ -19,11 +19,13 @@ void Script::Draw(SDL_Renderer* renderer) {
     }
 }
 
-bool Script::Run(Compile compile) {
-    if (this->index >= this->nodes.size()) {return false;}
+std::string Script::Run(Compile compile) {
+    if (this->index >= this->nodes.size()) {
+        return "End Of Program";
+    }
 
     time++;
-    if (time < this->speed) {return false;}
+    if (time < this->speed) {return "";}
     time = 0;
 
     this->nodes[this->index].isOn = false;
@@ -39,9 +41,9 @@ bool Script::Run(Compile compile) {
     }
 
     if (isTrueLine) {
-        compile.Run(this->nodes[this->index].command);
+        std::string codeError = compile.Run(this->nodes[this->index].command);
         this->nodes[this->index].isOn = true;
-        return true;
+        return codeError;
     }
-    return false;
+    return "End Of Program";
 }

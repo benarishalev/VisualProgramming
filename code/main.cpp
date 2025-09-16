@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     SDL_Event event;
     bool running = true;
 
-    bool scriptRunning = true;
+    runningCode = false;
 
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
                     placement.moveNode(script, event.button.x, event.button.y);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
-                    placement.openDialog(script, event.button.x, event.button.y);
+                    placement.openDialog(script, event.button.x, event.button.y, renderer);
                 }
             }
             if (event.type == SDL_EVENT_WINDOW_RESIZED) {
@@ -91,10 +91,22 @@ int main(int argc, char *argv[]) {
                 if (event.key.scancode == SDL_SCANCODE_BACKSPACE) {
                     placement.getInput(script, '\0', renderer, font);
                 }
+                if (event.key.scancode == SDL_SCANCODE_SPACE && !placement.showCodeText) {
+                    script.index = 0;
+                    runningCode = !runningCode;
+                }
             }
         }
 
-        script.Run(compile);
+        // running the script
+        // lineRan returns the error
+        if (runningCode) {
+            std::string lineRan = script.Run(compile);
+            if (lineRan != "") {
+                std::cout << "\033[31m" << lineRan << "\033[0m" << "\n";
+                runningCode = false;
+            }
+        }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);

@@ -107,8 +107,8 @@ void Placement::moveNodeUpdate(Script& script) {
     if (this->moveNodeIndex != -1 && this->buttonsClick[2]) {
         float x, y;
         SDL_GetMouseState(&x, &y);
-        script.nodes[this->moveNodeIndex].position.x = x;
-        script.nodes[this->moveNodeIndex].position.y = y;
+        script.nodes[this->moveNodeIndex].position.x += (x - script.nodes[this->moveNodeIndex].position.x) / 100;
+        script.nodes[this->moveNodeIndex].position.y += (y - script.nodes[this->moveNodeIndex].position.y) / 100;
     }
 }
 
@@ -143,6 +143,7 @@ void Placement::PlaceLine(Script& script, int x, int y) {
 
 bool Placement::Click(int x, int y) {
     this->showDialog = false;
+    this->showCodeText = false;
     for (int i = 0; i < this->buttons.size(); i++) {
         if (this->buttons[i].isClick(x, y)) {
             for (int j = 0; j < 3; j++) {
@@ -173,11 +174,13 @@ void Placement::updatePosition(int WIDTH, int HEIGHT) {
     }
 }
 
-void Placement::openDialog(Script& script, int x, int y) {
+void Placement::openDialog(Script& script, int x, int y, SDL_Renderer* renderer) {
     this->showDialog = false;
     for (int i = 0; i < script.nodes.size(); i++) {
         if (getDistance(x, y, script.nodes[i].position.x, script.nodes[i].position.y) < script.nodes[i].size / 2 + 10) {
             this->showDialog = true;
+            this->codeText.text = script.nodes[i].command;
+            this->codeText.setTexture(renderer, font, {255, 255, 255});
             this->nodeDialogIndex = i;
             this->dialog.x = script.nodes[i].position.x;
             this->dialog.y = script.nodes[i].position.y;
@@ -190,12 +193,13 @@ bool Placement::ClickDialog(Script& script, int x, int y, SDL_Renderer* renderer
     if (this->dialog.getPressed(x, y) == 0) {
         removeNode(script, x, y);
         this->showDialog = false;
+        this->showCodeText = false;
         this->nodeDialogIndex = -1;
         return true;
     }
     // makes sure that when i tried to change the code
     // it wont crash
-    if (this->dialog.getPressed(x, y) == 1 && !this->showCodeText && this->showDialog && this->nodeDialogIndex != -1) {
+    if (this->dialog.getPressed(x, y) == 1 && this->showDialog && this->nodeDialogIndex != -1) {
         this->showCodeText = !this->showCodeText;
         this->codeText.text = script.nodes[this->nodeDialogIndex].command;
         this->codeText.setTexture(renderer, font, {255, 255, 255});
