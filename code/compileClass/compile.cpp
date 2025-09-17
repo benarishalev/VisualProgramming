@@ -17,6 +17,10 @@ Compile::Compile(std::map<std::string, Variable>& variables) : variables(variabl
     };
     this->actions["call"] = [this](const std::vector<std::string>& args) {
         if (args.size() != 2) {return "Error: Not Enough Args in Action";}
+        if (this->functions.find(args[0]) == this->functions.end()) {
+            std::string error = "Error: Function not found: " + args[0];
+            return error.c_str();
+        }
         this->functions[args[0]](args);
         return "";
     };
@@ -37,6 +41,10 @@ Compile::Compile(std::map<std::string, Variable>& variables) : variables(variabl
         this->variables.emplace(name, Variable(value, type[0]));
     };
     this->conditions["eq"] = [this](const std::vector<std::string>& args) {
+        if (args.size() != 2) {
+            std::cout << "\033[31m" << "Not Enough Args in Condition: (eq)" << "\033[0m" << std::endl;
+            return false;
+        }
         Variable* arg1 = this->getPointer(args[0]);
         Variable arg2 = this->getCopy(args[1]);
         if (arg1->value.compare(arg2.value) == 0) {
@@ -45,10 +53,14 @@ Compile::Compile(std::map<std::string, Variable>& variables) : variables(variabl
         return false;
     };
     this->conditions["lo"] = [this](const std::vector<std::string>& args) {
+        if (args.size() != 2) {
+            std::cout << "\033[31m" << "Not Enough Args in Condition: (lo)" << "\033[0m" << std::endl;
+            return false;
+        }
         Variable* arg1 = this->getPointer(args[0]);
         Variable arg2 = this->getCopy(args[1]);
         if (arg1->type != 'i' || (arg2.type != 'i' && arg2.type != 'n')) {
-            std::cout << "Error: Cannot perform comparison on non-integer variables." << std::endl;
+            std::cout << "\033[31m" << "Error: Cannot perform comparison on non-integer variables." << "\033[0m" << std::endl;
             return false;
         }
         if (std::stoi(arg1->value) < std::stoi(arg2.value)) {
@@ -57,10 +69,14 @@ Compile::Compile(std::map<std::string, Variable>& variables) : variables(variabl
         return false;
     };
     this->conditions["gr"] = [this](const std::vector<std::string>& args) {
+        if (args.size() != 2) {
+            std::cout << "\033[31m" << "Not Enough Args in Condition: (gr)" << "\033[0m" << std::endl;
+            return false;
+        }
         Variable* arg1 = this->getPointer(args[0]);
         Variable arg2 = this->getCopy(args[1]);
         if (arg1->type != 'i' || (arg2.type != 'i' && arg2.type != 'n')) {
-            std::cout << "Error: Cannot perform comparison on non-integer variables." << std::endl;
+            std::cout << "\033[31m" << "Error: Cannot perform comparison on non-integer variables." << "\033[0m" << std::endl;
             return false;
         }
         if (std::stoi(arg1->value) > std::stoi(arg2.value)) {
@@ -125,7 +141,7 @@ std::string Compile::getConditionName(std::string line) {
     size_t pos = line.find(' ');
     std::string conditionName = line.substr(0, pos);
     if (this->conditions.find(conditionName) == this->conditions.end()) {
-        std::cout << "Condition not found: (" << conditionName  << ")" << std::endl;
+        std::cout << "\033[31m" << "Condition not found: (" << conditionName  << ")" << "\033[0m" << std::endl;
         return "";
     }
     return conditionName;

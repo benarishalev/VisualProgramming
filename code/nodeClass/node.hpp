@@ -10,7 +10,6 @@ class Node {
         Point position;
         std::string command;
         float size;
-        bool isOn;
     
     Node(Point position, std::string command);
     Node(Point position);

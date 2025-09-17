@@ -20,5 +20,8 @@ SDL_Cursor* handCursor = nullptr;
 SDL_Texture* pointerTexture = nullptr;
 SDL_Texture* circleImg = nullptr;
 
+TTF_Font* pixelFont = nullptr;
+TTF_Font* codeFont = nullptr;
+
 bool runningCode = NULL;
 

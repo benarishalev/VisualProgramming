@@ -24,7 +24,8 @@ int main(int argc, char *argv[]) {
     handCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
     SDL_SetCursor(regularCursor);
 
-    TTF_Font* font = TTF_OpenFont("fonts/pixel.ttf", 20);
+    pixelFont = TTF_OpenFont("fonts/pixel.ttf", 20);
+    codeFont = TTF_OpenFont("fonts/coding.ttf", 20);
 
     // load images
     circleImg = IMG_LoadTexture(renderer, "imgs/circle.png");
@@ -51,7 +52,7 @@ int main(int argc, char *argv[]) {
     std::map<std::string, Variable> variables;
     Script script(nodes, lines, variables);
     Compile compile(script.variables);
-    Placement placement(renderer, font, WIDTH, HEIGHT);
+    Placement placement(renderer, WIDTH, HEIGHT);
 
     SDL_Event event;
     bool running = true;
@@ -65,7 +66,10 @@ int main(int argc, char *argv[]) {
             }
             if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    if (placement.ClickDialog(script, event.button.x, event.button.y, renderer, font)) {
+                    if (placement.ClickNodeDialog(script, event.button.x, event.button.y, renderer)) {
+                        continue;
+                    }
+                    if (placement.ClickLineDialog(script, event.button.x, event.button.y, renderer)) {
                         continue;
                     }
                     if (placement.Click(event.button.x, event.button.y)) {
@@ -76,7 +80,8 @@ int main(int argc, char *argv[]) {
                     placement.moveNode(script, event.button.x, event.button.y);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
-                    placement.openDialog(script, event.button.x, event.button.y, renderer);
+                    placement.openNodeDialog(script, event.button.x, event.button.y, renderer);
+                    placement.openLineDialog(script, event.button.x, event.button.y, renderer);
                 }
             }
             if (event.type == SDL_EVENT_WINDOW_RESIZED) {
@@ -85,15 +90,18 @@ int main(int argc, char *argv[]) {
                 placement.updatePosition(WIDTH, HEIGHT);
             }
             if (event.type == SDL_EVENT_TEXT_INPUT) {
-                placement.getInput(script, event.text.text[0], renderer, font);
+                placement.getInput(script, event.text.text[0], renderer);
             }
             if (event.type == SDL_EVENT_KEY_DOWN) {
                 if (event.key.scancode == SDL_SCANCODE_BACKSPACE) {
-                    placement.getInput(script, '\0', renderer, font);
+                    placement.getInput(script, '\0', renderer);
                 }
                 if (event.key.scancode == SDL_SCANCODE_SPACE && !placement.showCodeText) {
                     script.index = 0;
                     runningCode = !runningCode;
+                    for (int i = 0; i < registers.size(); i++) {
+                        registers[i].value = "0";
+                    }
                 }
             }
         }
@@ -108,10 +116,12 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        script.Update();
+
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        script.Draw(renderer);
+        script.Draw(renderer, circleImg, placement, runningCode);
         placement.Draw(renderer);
         placement.moveNodeUpdate(script);
 

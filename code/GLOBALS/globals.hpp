@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <cmath>
 
 #include "../variableClass/variable.hpp"
@@ -22,5 +23,8 @@ extern SDL_Cursor* handCursor;
 
 extern SDL_Texture* circleImg;
 extern SDL_Texture* pointerTexture;
+
+extern TTF_Font* pixelFont;
+extern TTF_Font* codeFont;
 
 extern bool runningCode;
