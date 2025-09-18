@@ -24,6 +24,8 @@ Placement::Placement(SDL_Renderer* renderer, int WIDTH, int HEIGHT) {
     this->nodeDialog.setButtons(renderer, {"remove", "code"}, pixelFont);
     this->lineDialog.setButtons(renderer, {"remove", "code"}, pixelFont);
     this->showCodeText = false;
+
+    this->codeText = TextBox("", renderer);
 }
 
 void Placement::PlaceNode(Script& script, int x, int y) {
@@ -184,11 +186,9 @@ void Placement::Draw(SDL_Renderer* renderer) {
         this->lineDialog.Draw(renderer);
     }
     if (this->showCodeText) {
-        if (this->showNodeDialog) {
-            this->codeText.Draw(renderer, this->nodeDialog.x + 220, this->nodeDialog.y + 50);
-        } else if (this->showLineDialog) {
-            this->codeText.Draw(renderer, this->lineDialog.x + 220, this->lineDialog.y + 50);
-        }
+        // draw the text box of the code
+        // in the middle of the screen
+        this->codeText.Draw(renderer, WIDTH/2, HEIGHT/2);
     }
 }
 

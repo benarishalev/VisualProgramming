@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     SDL_SetCursor(regularCursor);
 
     pixelFont = TTF_OpenFont("fonts/pixel.ttf", 20);
-    codeFont = TTF_OpenFont("fonts/coding.ttf", 20);
+    codeFont = TTF_OpenFont("fonts/coding.ttf", 40);
 
     // load images
     circleImg = IMG_LoadTexture(renderer, "imgs/circle.png");

@@ -6,8 +6,8 @@ Script::Script(std::vector<Node> nodes, std::vector<Line> lines, std::map<std::s
     this->lines = lines;
     this->variables = variables;
     this->index = 0;
-    this->speed = 200;
-    this->runCodeCircleSpeed = 200;
+    this->speed = 1;
+    this->runCodeCircleSpeed = 1;
     this->time = 0;
     this->runCodePosition = Point(0, 0);
 }
